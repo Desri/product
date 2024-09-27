@@ -18,11 +18,11 @@ const ListProducts = (props: DetailListProducts) => {
         </CardBody>
         <CardFooter className="text-small block">
           <div>
-            <b>{props.title}</b>
+            <h2 className='w-[140px] md:w-[115px] xl:w-[165px] font-medium truncate ...'>{props.title}</h2>
             <p className="text-default-500">${props.price}</p>
           </div>
           <div className='mt-3'>
-            <p>
+            <p className='description text-ellipsis overflow-hidden'>
               {props.description}
             </p>
           </div>

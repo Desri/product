@@ -5,10 +5,13 @@ import {Button} from "@nextui-org/react";
 import axios from 'axios';
 import {Select, SelectItem} from "@nextui-org/select";
 import { api } from '@/constant/api';
+import NoData from '../NoData';
 
 export default function Homepage() {
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState([]);
+  const [limit, setLimit] = useState(10);
+  const [nextPage, setNextPage] = useState(10);
 
   const [selectCategory, setSelectCategory] = useState('');
   const [selectPrice, setSelectPrice] = useState('');
@@ -20,7 +23,7 @@ export default function Homepage() {
   };
 
   const fetchListProducts = async () => {
-    await axios.get(`${api.listProduct}`).then(res => {
+    await axios.get(`${api.listProduct}?limit=${limit}`).then(res => {
       setProducts(res.data.products)
     })
   };
@@ -31,8 +34,15 @@ export default function Homepage() {
     })
   };
 
+  const loadMore = async () => {
+    setNextPage(nextPage + 10);
+    await axios.get(`${api.listProduct}?limit=${limit}&skip=${nextPage}`).then(res => {
+      setProducts([...products, ...res.data.products])
+    })
+  };
+
   const prices = [
-    {key: "asc", label: "Murah ke mahal"},
+    {key: "asc", label: "Murah ke Mahal"},
     {key: "desc", label: "Mahal ke Murah"}
   ];
 
@@ -44,7 +54,7 @@ export default function Homepage() {
   return (
     <>
       <form>
-        <div className="grid grid-cols-3 gap-4 my-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 my-3">
           <div>
             <label className="font-bold text-sm">Category</label>
             <Select
@@ -77,15 +87,15 @@ export default function Homepage() {
               ))}
             </Select>
           </div>
-          <div className="pt-7">
-            <Button className="rounded h-9 ml-3 px-5 text-white bg-[#95a7b3]" onClick={() => submitFilter()}>
+          <div className="sm:pt-7">
+            <Button className="rounded h-9 sm:ml-3 px-5 text-white bg-[#95a7b3]" onClick={() => submitFilter()}>
               Search
             </Button>
           </div>
         </div>
       </form>
-      <div className='mt-4'>
-        <div className='grid grid-cols-4 gap-4'>
+      <div className='mt-8'>
+        <div className='grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4'>
           {products?.length !== 0 ? (
             <>
               {products?.map((item: any, idx) => (
@@ -93,11 +103,14 @@ export default function Homepage() {
               ))}
             </>
           ) : (
-            <p className='text-center py-5'>
-              No Data
-            </p>
+            <NoData />
           )}
         </div>
+        {products?.length !== 0 &&
+          <Button className="rounded h-9 w-full mt-8 bg-[#4589c3] text-white" onClick={() => loadMore()}>
+            More Products
+          </Button>
+        }
       </div>
     </>
   );

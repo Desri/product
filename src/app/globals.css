@@ -28,3 +28,9 @@
 .box-product .rounded-large img {
   border-radius: 0px !important;
 }
+.box-product .description {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  max-height: 64px;
+}
